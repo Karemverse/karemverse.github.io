@@ -1,4 +1,4 @@
-// Static checks for index.html. Run: node --test test/
+// Static checks for index.html. Run: node --test test/*.mjs
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync, existsSync } from 'node:fs';
