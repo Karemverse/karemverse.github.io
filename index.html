@@ -7,7 +7,7 @@
 <meta name="description" content="Karem Ben Chikha, aerospace and systems engineer. Builds KaremVerse SaaS products and open-source tools.">
 <meta property="og:title" content="Karem Ben Chikha">
 <meta property="og:description" content="Aerospace and systems engineer. Builds KaremVerse SaaS products and open-source tools.">
-<meta property="og:image" content="https://karembenchikha.github.io/profile.jpg">
+<meta property="og:image" content="https://karemverse.github.io/profile.jpg">
 <meta name="twitter:card" content="summary">
 <link rel="icon" href="profile.jpg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -138,6 +138,32 @@
     #chart { height: 180px; }
     .chart-head .src { margin-left: 0; width: 100%; }
   }
+  /* Heatmap */
+  .gh { padding: 20px 22px; }
+  .gh-head { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 14px; gap: 12px; flex-wrap: wrap; }
+  .gh-head b { font-weight: 600; }
+  .gh-head a { color: var(--muted); font-size: 13px; }
+  .heat-scroll { overflow-x: auto; }
+  .heat { display: grid; grid-auto-flow: column; grid-template-rows: repeat(7, 10px); grid-auto-columns: 10px; gap: 3px; width: max-content; }
+  .heat i { width: 10px; height: 10px; border-radius: 2px; background: var(--panel-2); }
+  .heat i.l1 { background: #3a3a40; } .heat i.l2 { background: #6b6b73; }
+  .heat i.l3 { background: #a9a9b0; } .heat i.l4 { background: #f0f0f2; }
+
+  /* Travel */
+  .travel { display: grid; grid-template-columns: 1fr 1fr; gap: 0; overflow: hidden; }
+  .travel-info { padding: 22px; display: flex; flex-direction: column; gap: 14px; }
+  .travel-info .big { font-size: 22px; font-weight: 700; letter-spacing: -0.02em; }
+  .travel-info .sub { color: var(--muted); font-size: 14px; }
+  .flags { display: flex; flex-direction: column; gap: 8px; margin-top: 4px; }
+  .flags li { list-style: none; display: flex; gap: 10px; align-items: center; font-size: 14px; }
+  .flags .f { font-size: 18px; width: 24px; text-align: center; }
+  .flags .home { margin-left: auto; font-size: 11.5px; color: var(--faint); border: 1px solid var(--line); border-radius: 6px; padding: 1px 7px; }
+  .globe-wrap { position: relative; aspect-ratio: 1; cursor: grab; }
+  .globe-wrap:active { cursor: grabbing; }
+  #globe { width: 100%; height: 100%; display: block; opacity: 0; transition: opacity .8s; }
+  #globe.on { opacity: 1; }
+  .badge.money { color: var(--text); }
+  @media (max-width: 600px) { .travel { grid-template-columns: 1fr; } }
 </style>
 </head>
 <body>
@@ -165,36 +191,36 @@
   </aside>
 
   <main>
-    <section class="panel chart" aria-label="GitHub contributions per month">
+    <section class="panel chart" aria-label="Last 12 months">
       <div class="chart-head">
         <span class="big" id="total"></span>
-        <span class="sub">GitHub contributions in 12 months</span>
+        <span class="sub" id="chart-sub">GitHub contributions in 12 months</span>
         <span class="src">Snapshot <span id="asof"></span></span>
       </div>
-      <svg id="chart" role="img" aria-label="Bar chart of monthly GitHub contributions"></svg>
+      <svg id="chart" role="img" aria-label="Bar chart of the last 12 months"></svg>
     </section>
 
     <div class="sec"><h2>Products</h2><span>4</span></div>
     <div class="grid2">
-      <a class="card" href="https://inviteo.design">
+      <a class="card" data-product="inviteo" href="https://inviteo.design">
         <div class="card-top"><div class="icon"><img src="assets/inviteo.png" alt=""></div><div class="name">Inviteo</div><span class="badge live">Live</span></div>
         <div class="desc">Digital invitations. Pick a template, customise it in a live phone preview, share one link with RSVP, countdown, music and map.</div>
         <div class="chips"><span>Next.js</span><span>Stripe</span><span>AWS SES</span></div>
         <div class="domain">inviteo.design</div>
       </a>
-      <a class="card" href="https://creatorpay.app">
+      <a class="card" data-product="creatorpay" href="https://creatorpay.app">
         <div class="card-top"><div class="icon"><img src="assets/creatorpay.svg" alt=""></div><div class="name">CreatorPay</div><span class="badge live">Live</span></div>
         <div class="desc">Branded invoices for creators, paid through Stripe.</div>
         <div class="chips"><span>React</span><span>Supabase</span><span>Stripe</span></div>
         <div class="domain">creatorpay.app</div>
       </a>
-      <a class="card" href="https://www.scopelock.app">
+      <a class="card" data-product="scopelock" href="https://www.scopelock.app">
         <div class="card-top"><div class="icon"><img src="assets/scopelock.svg" alt=""></div><div class="name">ScopeLock</div><span class="badge live">Live</span></div>
         <div class="desc">Detects billable scope changes in client messages for contractors and drafts change orders.</div>
         <div class="chips"><span>Next.js</span><span>Clerk</span><span>Supabase</span></div>
         <div class="domain">scopelock.app</div>
       </a>
-      <a class="card" href="https://www.stoxx.app">
+      <a class="card" data-product="stoxx" href="https://www.stoxx.app">
         <div class="card-top"><div class="icon">S</div><div class="name">Stoxx</div><span class="badge live">Live</span></div>
         <div class="desc">Swing trading signal scanner for the TSX and S&amp;P 500, fed nightly by an AWS Lambda.</div>
         <div class="chips"><span>Next.js</span><span>AWS Lambda</span><span>Supabase</span></div>
@@ -237,61 +263,28 @@
       <a href="https://github.com/KaremBenChikha/simple-image-classification"><div class="lname">simple-image-classification</div><div class="ldesc">Fashion MNIST classifier with TensorFlow and Keras</div></a>
     </div>
 
+    <div class="sec"><h2>GitHub</h2></div>
+    <section class="panel gh">
+      <div class="gh-head"><span><b id="gh-count"></b> contributions in the last year</span><a href="https://github.com/KaremBenChikha">@KaremBenChikha</a></div>
+      <div class="heat-scroll"><div class="heat" id="heat" role="img" aria-label="Daily GitHub contributions over the last year"></div></div>
+    </section>
+
+    <div class="sec"><h2>Travels</h2><span id="travel-count"></span></div>
+    <section class="panel travel">
+      <div class="travel-info">
+        <div class="big" id="travel-big"></div>
+        <div class="sub">Countries I have been to so far.</div>
+        <ul class="flags" id="flags"></ul>
+      </div>
+      <div class="globe-wrap"><canvas id="globe" aria-label="Globe with visited countries"></canvas></div>
+    </section>
+
     <footer>
-      Built by hand, hosted on GitHub Pages. <a href="https://github.com/KaremBenChikha/karembenchikha.github.io">Source</a>
+      Built by hand, hosted on GitHub Pages. <a href="https://github.com/Karemverse/karemverse.github.io">Source</a>
     </footer>
   </main>
 </div>
 
-<script id="contrib-data" type="application/json">
-{"asOf":"2026-11-21","months":[["2025-12",0],["2026-01",4],["2026-02",8],["2026-03",111],["2026-04",165],["2026-05",21],["2026-06",244],["2026-07",416],["2026-08",258],["2026-09",700],["2026-10",1547],["2026-11",483]]}
-</script>
-<script>
-(function () {
-  var data = JSON.parse(document.getElementById('contrib-data').textContent);
-  var months = data.months;
-  var total = months.reduce(function (s, m) { return s + m[1]; }, 0);
-  document.getElementById('total').textContent = total.toLocaleString('en-US');
-  document.getElementById('asof').textContent = data.asOf;
-
-  var svg = document.getElementById('chart');
-  var NS = 'http://www.w3.org/2000/svg';
-  var names = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-
-  function el(tag, attrs, text) {
-    var n = document.createElementNS(NS, tag);
-    for (var k in attrs) n.setAttribute(k, attrs[k]);
-    if (text != null) n.textContent = text;
-    return n;
-  }
-
-  function draw() {
-    while (svg.firstChild) svg.removeChild(svg.firstChild);
-    var W = svg.clientWidth || 700, H = svg.clientHeight || 220;
-    var left = 40, bottom = 22, top = 8;
-    var max = Math.max.apply(null, months.map(function (m) { return m[1]; }));
-    var step = Math.pow(10, Math.floor(Math.log10(max || 1)));
-    var ceil = Math.ceil(max / step) * step;
-    svg.setAttribute('viewBox', '0 0 ' + W + ' ' + H);
-    [0, 0.5, 1].forEach(function (f) {
-      var y = top + (H - top - bottom) * (1 - f);
-      svg.appendChild(el('line', { x1: left, x2: W, y1: y, y2: y, 'class': 'grid' }));
-      svg.appendChild(el('text', { x: left - 8, y: y + 4, 'text-anchor': 'end' }, Math.round(ceil * f).toLocaleString('en-US')));
-    });
-    var slot = (W - left) / months.length;
-    var bw = Math.min(36, slot * 0.62);
-    months.forEach(function (m, i) {
-      var h = Math.max(2, (H - top - bottom) * m[1] / ceil);
-      var x = left + slot * i + (slot - bw) / 2;
-      var r = el('rect', { x: x, y: H - bottom - h, width: bw, height: h, rx: 4, 'class': m[1] ? 'bar' : 'bar zero' });
-      r.appendChild(el('title', {}, m[0] + ': ' + m[1].toLocaleString('en-US') + ' contributions'));
-      svg.appendChild(r);
-      svg.appendChild(el('text', { x: x + bw / 2, y: H - 6, 'text-anchor': 'middle' }, names[+m[0].slice(5) - 1]));
-    });
-  }
-  draw();
-  window.addEventListener('resize', draw);
-})();
-</script>
+<script src="app.js" type="module"></script>
 </body>
 </html>
