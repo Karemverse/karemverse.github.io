@@ -164,7 +164,25 @@ async function renderTravel(travel) {
   canvas.classList.add('on');
 }
 
+export function visibleSections(filter, ids) {
+  return ids.filter((id) => filter === 'all' || id === filter);
+}
+
+function setupFilters() {
+  const buttons = [...document.querySelectorAll('.filters button')];
+  const sections = [...document.querySelectorAll('.proj')];
+  const ids = sections.map((s) => s.dataset.section);
+  for (const b of buttons) {
+    b.addEventListener('click', () => {
+      const show = new Set(visibleSections(b.dataset.filter, ids));
+      for (const s of sections) s.hidden = !show.has(s.dataset.section);
+      for (const x of buttons) x.classList.toggle('on', x === b);
+    });
+  }
+}
+
 if (typeof document !== 'undefined') {
+  setupFilters();
   const [gh, rev, travel] = await Promise.all([load('data/github.json'), load('data/revenue.json'), load('data/travel.json')]);
   renderTop(gh, rev);
   renderProductBadges(rev);

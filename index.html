@@ -164,6 +164,25 @@
   #globe.on { opacity: 1; }
   .badge.money { color: var(--text); }
   @media (max-width: 600px) { .travel { grid-template-columns: 1fr; } }
+  /* Filters, tags, stretched links */
+  .filters { display: flex; flex-wrap: wrap; gap: 8px; margin: 36px 0 -18px; }
+  .filters button {
+    font: inherit; font-size: 13px; color: var(--muted); cursor: pointer;
+    background: var(--panel); border: 1px solid var(--line); border-radius: 999px; padding: 6px 13px;
+  }
+  .filters button:hover { color: var(--text); }
+  .filters button.on { background: var(--accent); color: #0b0b0c; border-color: var(--accent); }
+  .proj[hidden] { display: none; }
+  article.card { position: relative; }
+  article.card.nolink:hover { transform: none; }
+  .stretch { text-decoration: none; }
+  .stretch::after { content: ""; position: absolute; inset: 0; border-radius: 16px; }
+  .card-foot { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; font-size: 12.5px; }
+  .card-foot:empty { display: none; }
+  .tag { color: var(--faint); border: 1px dashed var(--line); border-radius: 6px; padding: 1px 7px; font-size: 11.5px; }
+  .extra { position: relative; z-index: 1; color: var(--muted); text-underline-offset: 3px; }
+  .extra:hover { color: var(--text); }
+  .badge.private { color: var(--faint); }
 </style>
 </head>
 <body>
@@ -171,11 +190,12 @@
   <aside>
     <img class="avatar" src="profile.jpg" alt="Karem Ben Chikha">
     <h1>Karem Ben Chikha</h1>
-    <p class="lede">Aerospace and systems engineer at <b>MTLS Aerostructure</b>. On the side I build SaaS products and control and embedded systems.</p>
-    <p class="facts"><b>4</b> live products under <a href="https://github.com/Karemverse">KaremVerse</a>, <b>11</b> open-source projects.</p>
+    <p class="lede">Aerospace and systems engineer at <b>MTLS Aerostructure</b>. On the side I build SaaS products, embedded and robotics systems, and math-heavy simulations.</p>
+    <p class="facts"><b>4</b> products under <a href="https://github.com/Karemverse">KaremVerse</a>, <b>13</b> projects across software, embedded systems and math.</p>
     <a class="cta" href="https://linkedin.com/in/karem-ben-chikha">Get in touch</a>
     <div class="socials">
       <a href="https://github.com/KaremBenChikha"><svg viewBox="0 0 24 24"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>GitHub</a>
+      <a href="https://x.com/karemverse"><svg viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>X</a>
       <a href="https://linkedin.com/in/karem-ben-chikha"><svg viewBox="0 0 24 24"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>LinkedIn</a>
       <a href="https://www.hackster.io/karem_benchikha"><svg viewBox="0 0 24 24"><path d="M4 3h3v18H4zM10.5 7h3v14h-3zM17 11h3v10h-3z"/></svg>Hackster</a>
     </div>
@@ -200,68 +220,147 @@
       <svg id="chart" role="img" aria-label="Bar chart of the last 12 months"></svg>
     </section>
 
+    <nav class="filters" aria-label="Filter projects">
+      <button class="on" data-filter="all">All</button>
+      <button data-filter="products">Products</button>
+      <button data-filter="agents">AI agents &amp; dev tools</button>
+      <button data-filter="embedded">Embedded &amp; robotics</button>
+      <button data-filter="math">Engineering &amp; math</button>
+      <button data-filter="ml">Machine learning</button>
+      <button data-filter="infra">Infrastructure</button>
+    </nav>
+    <section class="proj" data-section="products">
     <div class="sec"><h2>Products</h2><span>4</span></div>
     <div class="grid2">
-      <a class="card" data-product="inviteo" href="https://inviteo.design">
-        <div class="card-top"><div class="icon"><img src="assets/inviteo.png" alt=""></div><div class="name">Inviteo</div><span class="badge live">Live</span></div>
+      <article class="card" data-product="inviteo">
+        <div class="card-top"><div class="icon"><img src="assets/inviteo.png" alt=""></div><div class="name"><a class="stretch" href="https://inviteo.design">Inviteo</a></div><span class="badge live">Live</span></div>
         <div class="desc">Digital invitations. Pick a template, customise it in a live phone preview, share one link with RSVP, countdown, music and map.</div>
         <div class="chips"><span>Next.js</span><span>Stripe</span><span>AWS SES</span></div>
-        <div class="domain">inviteo.design</div>
-      </a>
-      <a class="card" data-product="creatorpay" href="https://creatorpay.app">
-        <div class="card-top"><div class="icon"><img src="assets/creatorpay.svg" alt=""></div><div class="name">CreatorPay</div><span class="badge live">Live</span></div>
+        <div class="card-foot"><span class="domain">inviteo.design</span></div>
+      </article>
+      <article class="card" data-product="creatorpay">
+        <div class="card-top"><div class="icon"><img src="assets/creatorpay.svg" alt=""></div><div class="name"><a class="stretch" href="https://creatorpay.app">CreatorPay</a></div><span class="badge live">Live</span></div>
         <div class="desc">Branded invoices for creators, paid through Stripe.</div>
         <div class="chips"><span>React</span><span>Supabase</span><span>Stripe</span></div>
-        <div class="domain">creatorpay.app</div>
-      </a>
-      <a class="card" data-product="scopelock" href="https://www.scopelock.app">
-        <div class="card-top"><div class="icon"><img src="assets/scopelock.svg" alt=""></div><div class="name">ScopeLock</div><span class="badge live">Live</span></div>
+        <div class="card-foot"><span class="domain">creatorpay.app</span></div>
+      </article>
+      <article class="card" data-product="scopelock">
+        <div class="card-top"><div class="icon"><img src="assets/scopelock.svg" alt=""></div><div class="name"><a class="stretch" href="https://www.scopelock.app">ScopeLock</a></div><span class="badge live">Live</span></div>
         <div class="desc">Detects billable scope changes in client messages for contractors and drafts change orders.</div>
         <div class="chips"><span>Next.js</span><span>Clerk</span><span>Supabase</span></div>
-        <div class="domain">scopelock.app</div>
-      </a>
-      <a class="card" data-product="stoxx" href="https://www.stoxx.app">
-        <div class="card-top"><div class="icon">S</div><div class="name">Stoxx</div><span class="badge live">Live</span></div>
+        <div class="card-foot"><span class="domain">scopelock.app</span></div>
+      </article>
+      <article class="card" data-product="stoxx">
+        <div class="card-top"><div class="icon">S</div><div class="name"><a class="stretch" href="https://www.stoxx.app">Stoxx</a></div><span class="badge live">Live</span></div>
         <div class="desc">Swing trading signal scanner for the TSX and S&amp;P 500, fed nightly by an AWS Lambda.</div>
         <div class="chips"><span>Next.js</span><span>AWS Lambda</span><span>Supabase</span></div>
-        <div class="domain">stoxx.app</div>
-      </a>
+        <div class="card-foot"><span class="domain">stoxx.app</span></div>
+      </article>
     </div>
-
-    <div class="sec"><h2>Open source</h2><span>4</span></div>
+    </section>
+    <section class="proj" data-section="agents">
+    <div class="sec"><h2>AI agents &amp; dev tools</h2><span>3</span></div>
     <div class="grid2">
-      <a class="card" href="https://github.com/KaremBenChikha/sim2paper">
-        <div class="card-top"><div class="icon">📄</div><div class="name">sim2paper</div><span class="badge">MIT</span></div>
+      <article class="card">
+        <div class="card-top"><div class="icon">📄</div><div class="name"><a class="stretch" href="https://github.com/KaremBenChikha/sim2paper">sim2paper</a></div><span class="badge">MIT</span></div>
         <div class="desc">Give Claude Code real hands on MATLAB and Simulink through MCP, then take simulations to a reproducible paper.</div>
         <div class="chips"><span>MATLAB</span><span>Simulink</span><span>MCP</span></div>
-      </a>
-      <a class="card" href="https://github.com/KaremBenChikha/claude-code-router">
-        <div class="card-top"><div class="icon">🔀</div><div class="name">claude-code-router</div><span class="badge">MIT</span></div>
+        <div class="card-foot"><span class="tag">Personal</span></div>
+      </article>
+      <article class="card">
+        <div class="card-top"><div class="icon">🔀</div><div class="name"><a class="stretch" href="https://github.com/KaremBenChikha/claude-code-router">claude-code-router</a></div><span class="badge">MIT</span></div>
         <div class="desc">Transparent proxy that routes Claude Code to DeepSeek models when rate limits hit.</div>
         <div class="chips"><span>Node.js</span><span>Proxy</span></div>
-      </a>
-      <a class="card" href="https://github.com/Karemverse/homelab">
-        <div class="card-top"><div class="icon">🖥️</div><div class="name">homelab</div><span class="badge">Template</span></div>
-        <div class="desc">Sealed self-hosted home server: Tailscale-only, private CA, zero open ports. Caddy, Pi-hole, Immich, n8n.</div>
-        <div class="chips"><span>Docker</span><span>Tailscale</span><span>Caddy</span></div>
-      </a>
-      <a class="card" href="https://github.com/KaremBenChikha/claude-code-blueprint">
-        <div class="card-top"><div class="icon">📘</div><div class="name">claude-code-blueprint</div><span class="badge">MIT</span></div>
+        <div class="card-foot"><span class="tag">Personal</span></div>
+      </article>
+      <article class="card">
+        <div class="card-top"><div class="icon">📘</div><div class="name"><a class="stretch" href="https://github.com/KaremBenChikha/claude-code-blueprint">claude-code-blueprint</a></div><span class="badge">MIT</span></div>
         <div class="desc">Portable setup for a persistent AI coding environment shared across tools and machines.</div>
         <div class="chips"><span>Claude Code</span><span>Shell</span></div>
-      </a>
+        <div class="card-foot"><span class="tag">Personal</span></div>
+      </article>
     </div>
-
-    <div class="sec"><h2>Earlier projects</h2><span>7</span></div>
-    <div class="list">
-      <a href="https://github.com/KaremBenChikha/face-mask-detection"><div class="lname">face-mask-detection</div><div class="ldesc">TensorFlow and OpenCV mask detector driving an Arduino</div></a>
-      <a href="https://github.com/KaremBenChikha/smart-aquarium"><div class="lname">smart-aquarium</div><div class="ldesc">Android app and ESP32 firmware for a connected aquarium</div></a>
-      <a href="https://github.com/KaremBenChikha/agv-hybride"><div class="lname">agv-hybride</div><div class="ldesc">Hybrid automated guided vehicle</div></a>
-      <a href="https://github.com/KaremBenChikha/ball-and-beam"><div class="lname">ball-and-beam</div><div class="ldesc">PID stabilization on Arduino with LabVIEW</div></a>
-      <a href="https://github.com/KaremBenChikha/object-detection-yolo"><div class="lname">object-detection-yolo</div><div class="ldesc">Object detection with YOLO and OpenCV</div></a>
-      <a href="https://github.com/KaremBenChikha/image-classification-sagemaker"><div class="lname">image-classification-sagemaker</div><div class="ldesc">Image classifier trained and deployed on AWS SageMaker</div></a>
-      <a href="https://github.com/KaremBenChikha/simple-image-classification"><div class="lname">simple-image-classification</div><div class="ldesc">Fashion MNIST classifier with TensorFlow and Keras</div></a>
+    </section>
+    <section class="proj" data-section="embedded">
+    <div class="sec"><h2>Embedded &amp; robotics</h2><span>4</span></div>
+    <div class="grid2">
+      <article class="card">
+        <div class="card-top"><div class="icon">🤖</div><div class="name"><a class="stretch" href="https://github.com/KaremBenChikha/agv-hybride">agv-hybride</a></div><span class="badge">MIT</span></div>
+        <div class="desc">ROS navigation stack for a hybrid automated guided vehicle: SLAM, path planning, sensor integration.</div>
+        <div class="chips"><span>ROS</span><span>Gazebo</span><span>SLAM</span></div>
+        <div class="card-foot"><span class="tag">Personal</span></div>
+      </article>
+      <article class="card">
+        <div class="card-top"><div class="icon">🐟</div><div class="name"><a class="stretch" href="https://github.com/KaremBenChikha/smart-aquarium">smart-aquarium</a></div><span class="badge">MIT</span></div>
+        <div class="desc">Android app and ESP32 firmware to monitor and control a home aquarium over MQTT.</div>
+        <div class="chips"><span>ESP32</span><span>Android</span><span>MQTT</span></div>
+        <div class="card-foot"><span class="tag">Personal</span><a class="extra" href="https://www.hackster.io/karem_benchikha/smart-aquarium-d4d2dd">Hackster write-up</a></div>
+      </article>
+      <article class="card">
+        <div class="card-top"><div class="icon">⚙️</div><div class="name"><a class="stretch" href="https://github.com/KaremBenChikha/ball-and-beam">ball-and-beam</a></div><span class="badge">MIT</span></div>
+        <div class="desc">PID control on Arduino with LabVIEW to stabilize a ball on a beam.</div>
+        <div class="chips"><span>Arduino</span><span>LabVIEW</span><span>PID</span></div>
+        <div class="card-foot"><span class="tag">School</span><a class="extra" href="https://www.hackster.io/karem_benchikha/ball-and-beam-601d7a">Hackster write-up</a></div>
+      </article>
+      <article class="card">
+        <div class="card-top"><div class="icon">😷</div><div class="name"><a class="stretch" href="https://github.com/KaremBenChikha/face-mask-detection">face-mask-detection</a></div><span class="badge">MIT</span></div>
+        <div class="desc">Neural network that detects face masks and triggers actions on an Arduino.</div>
+        <div class="chips"><span>TensorFlow</span><span>OpenCV</span><span>Arduino</span></div>
+        <div class="card-foot"><span class="tag">Personal</span><a class="extra" href="https://www.hackster.io/karem_benchikha/facemask-detection-88fa1a">Hackster write-up</a></div>
+      </article>
     </div>
+    </section>
+    <section class="proj" data-section="math">
+    <div class="sec"><h2>Engineering &amp; math</h2><span>2</span></div>
+    <div class="grid2">
+      <article class="card nolink">
+        <div class="card-top"><div class="icon">📐</div><div class="name">Options Lab</div><span class="badge private">Private</span></div>
+        <div class="desc">Gamified options course with a "trade back in time" replay. Prices modeled with Black-Scholes on historical VIX and T-bill rates.</div>
+        <div class="chips"><span>Python</span><span>Black-Scholes</span></div>
+        <div class="card-foot"><span class="tag">Personal</span></div>
+      </article>
+      <article class="card nolink">
+        <div class="card-top"><div class="icon">📊</div><div class="name">S&amp;P 500 behavior lab</div><span class="badge private">Private</span></div>
+        <div class="desc">Ten investor behaviors, same starting money, ten years of daily S&amp;P 500 data. Plus a TSX ETF study with an out-of-sample optimizer.</div>
+        <div class="chips"><span>Python</span><span>Simulation</span></div>
+        <div class="card-foot"><span class="tag">Personal</span></div>
+      </article>
+    </div>
+    </section>
+    <section class="proj" data-section="ml">
+    <div class="sec"><h2>Machine learning</h2><span>3</span></div>
+    <div class="grid2">
+      <article class="card">
+        <div class="card-top"><div class="icon">👁️</div><div class="name"><a class="stretch" href="https://github.com/KaremBenChikha/object-detection-yolo">object-detection-yolo</a></div><span class="badge">MIT</span></div>
+        <div class="desc">Object detection with YOLO and OpenCV.</div>
+        <div class="chips"><span>YOLO</span><span>OpenCV</span></div>
+        <div class="card-foot"><span class="tag">School</span></div>
+      </article>
+      <article class="card">
+        <div class="card-top"><div class="icon">☁️</div><div class="name"><a class="stretch" href="https://github.com/KaremBenChikha/image-classification-sagemaker">image-classification-sagemaker</a></div><span class="badge">MIT</span></div>
+        <div class="desc">Image classifier trained and deployed on AWS SageMaker.</div>
+        <div class="chips"><span>AWS SageMaker</span></div>
+        <div class="card-foot"><span class="tag">School</span></div>
+      </article>
+      <article class="card">
+        <div class="card-top"><div class="icon">📷</div><div class="name"><a class="stretch" href="https://github.com/KaremBenChikha/simple-image-classification">simple-image-classification</a></div><span class="badge">MIT</span></div>
+        <div class="desc">Fashion MNIST classifier with TensorFlow and Keras.</div>
+        <div class="chips"><span>TensorFlow</span><span>Keras</span></div>
+        <div class="card-foot"><span class="tag">School</span><a class="extra" href="https://www.hackster.io/karem_benchikha/sample-image-classification-with-tensorflow-e9e598">Hackster write-up</a></div>
+      </article>
+    </div>
+    </section>
+    <section class="proj" data-section="infra">
+    <div class="sec"><h2>Infrastructure</h2><span>1</span></div>
+    <div class="grid2">
+      <article class="card">
+        <div class="card-top"><div class="icon">🖥️</div><div class="name"><a class="stretch" href="https://github.com/Karemverse/homelab">homelab</a></div><span class="badge">Template</span></div>
+        <div class="desc">Sealed self-hosted home server: Tailscale-only, private CA, zero open ports. Caddy, Pi-hole, Immich, n8n.</div>
+        <div class="chips"><span>Docker</span><span>Tailscale</span><span>Caddy</span></div>
+        <div class="card-foot"><span class="tag">Personal</span></div>
+      </article>
+    </div>
+    </section>
 
     <div class="sec"><h2>GitHub</h2></div>
     <section class="panel gh">

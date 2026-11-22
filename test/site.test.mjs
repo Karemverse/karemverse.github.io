@@ -51,25 +51,51 @@ test('local assets referenced by the page exist', () => {
 });
 
 test('section counts match the cards shown', () => {
-  const grids = html.split('<div class="sec">').slice(1);
-  for (const g of grids) {
-    const m = g.match(/^<h2>[^<]+<\/h2><span>(\d+)<\/span>/);
-    if (!m) continue;
-    const n = Number(m[1]);
-    const block = g.split('<div class="sec">')[0].split('<footer>')[0];
-    const items = (block.match(/<a class="card"/g) || []).length + (block.match(/<a href="https:\/\/github\.com\/[^"]+"><div class="lname">/g) || []).length;
-    assert.equal(items, n);
+  const parts = html.split('<section class="proj"').slice(1);
+  assert.equal(parts.length, 6);
+  for (const part of parts) {
+    const block = part.split('</section>')[0];
+    const n = Number(block.match(/<h2>[^<]+<\/h2><span>(\d+)<\/span>/)[1]);
+    assert.equal((block.match(/<article class="card/g) || []).length, n);
   }
 });
 
-test('open-source count in the sidebar matches the page', () => {
-  const claimed = Number(html.match(/<b>(\d+)<\/b> open-source projects/)[1]);
-  const oss = (html.match(/href="https:\/\/github\.com\/(KaremBenChikha|Karemverse)\/[a-z0-9-]+"/g) || []).length;
-  assert.equal(oss, claimed);
+test('every filter button targets a section', () => {
+  const sections = [...html.matchAll(/data-section="([a-z]+)"/g)].map((m) => m[1]);
+  const filters = [...html.matchAll(/data-filter="([a-z]+)"/g)].map((m) => m[1]);
+  assert.deepEqual(filters, ['all', ...sections]);
 });
 
-test('no links to private or removed repos', () => {
-  for (const bad of ['removed-project', 'ems-marketplace', 'polybrain-chat', 'CryptoTaxProject', 'KaremBenChikha/Homelab', 'KaremBenChikha/stoxx']) {
-    assert.equal(html.includes(bad), false, bad);
+test('sidebar project count matches non-product cards', () => {
+  const claimed = Number(html.match(/<b>(\d+)<\/b> projects across/)[1]);
+  const total = (html.match(/<article class="card/g) || []).length;
+  const products = (html.match(/data-product="/g) || []).length;
+  assert.equal(total - products, claimed);
+});
+
+// Only these repos are public. Anything else linked from the page would 404 or leak a private name.
+const PUBLIC_REPOS = new Set([
+  'KaremBenChikha/sim2paper', 'KaremBenChikha/claude-code-router', 'KaremBenChikha/claude-code-blueprint',
+  'KaremBenChikha/agv-hybride', 'KaremBenChikha/smart-aquarium', 'KaremBenChikha/ball-and-beam',
+  'KaremBenChikha/face-mask-detection', 'KaremBenChikha/object-detection-yolo',
+  'KaremBenChikha/image-classification-sagemaker', 'KaremBenChikha/simple-image-classification',
+  'Karemverse/homelab', 'Karemverse/karemverse.github.io',
+]);
+
+test('repo links point only at public repos', () => {
+  const repos = [...html.matchAll(/href="https:\/\/github\.com\/([^/"]+\/[^/"]+)"/g)].map((m) => m[1]);
+  assert.ok(repos.length >= 11);
+  for (const r of repos) assert.ok(PUBLIC_REPOS.has(r), r);
+});
+
+test('private cards have no link', () => {
+  for (const m of html.matchAll(/<article class="card[^"]*"[^>]*>([\s\S]*?)<\/article>/g)) {
+    if (m[1].includes('badge private')) assert.equal(m[1].includes('href='), false);
   }
+});
+
+test('filter helper', async () => {
+  const app = await import(join(root, 'app.js'));
+  assert.deepEqual(app.visibleSections('all', ['a', 'b']), ['a', 'b']);
+  assert.deepEqual(app.visibleSections('b', ['a', 'b']), ['b']);
 });
